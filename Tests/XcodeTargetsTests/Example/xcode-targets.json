@@ -1,0 +1,33 @@
+{
+    "name": "Example",
+    "fileMembershipSets": [
+        {
+            "targets": [
+                "TargetA",
+                "TargetB"
+            ],
+            "exclusive": {
+                "TargetA": [
+                    "Sources/TargetA"
+                ],
+                "TargetB": [
+                    "Sources/TargetB"
+                ]
+            }
+        }
+    ],
+    "forbiddenResourceSets": [
+        {
+            "targets": [
+                "TargetA",
+                "TargetB"
+            ],
+            "paths": [
+                "Sources/Forbidden"
+            ],
+            "files": [
+                "Sources/Forbidden/DoNotUse.swift"
+            ]
+        }
+    ]
+}

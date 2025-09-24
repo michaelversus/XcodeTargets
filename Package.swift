@@ -5,10 +5,28 @@ import PackageDescription
 
 let package = Package(
     name: "XcodeTargets",
+    platforms: [.macOS(.v14)],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0"),
+        .package(url: "https://github.com/tuist/XcodeProj.git", .upToNextMajor(from: "9.5.0")),
+        .package(url: "https://github.com/tuist/Path.git", .upToNextMajor(from: "0.3.8"))
+    ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "XcodeTargets"),
+            name: "XcodeTargets",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "XcodeProj", package: "XcodeProj"),
+                .product(name: "Path", package: "Path")
+            ]
+        ),
+        .testTarget(
+            name: "XcodeTargetsTests",
+            dependencies: [
+                "XcodeTargets",
+                .product(name: "XcodeProj", package: "XcodeProj")
+            ],
+            resources: [.copy("Example")]
+        )
     ]
 )
