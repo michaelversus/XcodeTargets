@@ -11,12 +11,16 @@ extension Configuration {
                     "TargetB"
                 ],
                 exclusive: [
-                    "TargetA": [
-                        "Sources/TargetA"
-                    ],
-                    "TargetB": [
-                        "Sources/TargetB"
-                    ]
+                    "TargetA": TargetExclusive(
+                        files: ["Sources/TargetA"],
+                        dependencies: [],
+                        frameworks: []
+                    ),
+                    "TargetB": TargetExclusive(
+                        files: ["Sources/TargetB"],
+                        dependencies: [],
+                        frameworks: []
+                    )
                 ]
             )
         ],
@@ -33,6 +37,7 @@ extension Configuration {
                     "Sources/Forbidden/DoNotUse.swift"
                 ]
             )
-        ]
+        ],
+        duplicatesValidationExcludedTargets: []
     )
 }

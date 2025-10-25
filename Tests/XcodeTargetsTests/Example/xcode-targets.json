@@ -7,12 +7,16 @@
                 "TargetB"
             ],
             "exclusive": {
-                "TargetA": [
-                    "Sources/TargetA"
-                ],
-                "TargetB": [
-                    "Sources/TargetB"
-                ]
+                "TargetA": {
+                    "files": ["Sources/TargetA"],
+                    "dependencies": [],
+                    "frameworks": []
+                },
+                "TargetB": {
+                    "files": ["Sources/TargetB"],
+                    "dependencies": [],
+                    "frameworks": []
+                }
             }
         }
     ],
@@ -29,5 +33,6 @@
                 "Sources/Forbidden/DoNotUse.swift"
             ]
         }
-    ]
+    ],
+    "duplicatesValidationExcludedTargets": []
 }
