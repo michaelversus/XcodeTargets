@@ -26,13 +26,3 @@ extension Configuration {
         let paths: [String]?
     }
 }
-
-extension Configuration {
-    func allTargetNames() -> Set<String> {
-        var targetNames = Set(fileMembershipSets.flatMap { $0.targets })
-        if let forbiddenResourceSets {
-            targetNames.formUnion(forbiddenResourceSets.flatMap { $0.targets })
-        }
-        return targetNames
-    }
-}

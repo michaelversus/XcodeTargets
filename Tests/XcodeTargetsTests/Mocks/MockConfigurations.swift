@@ -31,9 +31,7 @@ extension Configuration {
                     "TargetB"
                 ],
                 paths: [
-                    "Sources/Forbidden"
-                ],
-                files: [
+                    "Sources/Forbidden",
                     "Sources/Forbidden/DoNotUse.swift"
                 ]
             )

@@ -1,5 +1,6 @@
 import Foundation
-enum ExclusivesError: Swift.Error, CustomStringConvertible, Equatable {
+
+enum ExclusivesError: Error, CustomStringConvertible, Equatable {
     case invalidTargetName(String)
     case invalidPathForTarget(targetName: String, path: String)
     case exclusiveEntriesFound(targetNames: String)

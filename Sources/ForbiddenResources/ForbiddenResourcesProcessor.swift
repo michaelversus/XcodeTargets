@@ -36,8 +36,6 @@ struct ForbiddenResourcesProcessor {
                 for forbiddenResourcePath in forbiddenResourceSet.paths ?? [] {
                     let matchingPaths = target.resourceFilePaths.filter { $0.contains(forbiddenResourcePath) }
                     if !matchingPaths.isEmpty {
-                        let message = "Forbidden resource(s) found in target \(targetName):\n" +
-                        matchingPaths.map { " - \($0)" }.joined(separator: "\n")
                         throw ForbiddenResourceError(
                             targetName: targetName,
                             matchingPaths: matchingPaths
