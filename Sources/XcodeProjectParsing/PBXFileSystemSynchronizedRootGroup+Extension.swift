@@ -1,4 +1,5 @@
 import XcodeProj
+import PathKit
 import Foundation
 
 struct MembershipException: Hashable {
@@ -36,5 +37,15 @@ extension PBXFileSystemSynchronizedRootGroup {
         let exceptions = try membershipExceptions(rootPath: root)
         let rootURL = URL(fileURLWithPath: root)
         return try fileManager.allFiles(in: rootURL, membershipExceptions: exceptions)
+    }
+
+    func linkedTargets(
+        proj: PBXProj
+    ) throws -> Set<String> {
+        let allTargets = proj.nativeTargets
+        let groupTargets = allTargets.filter { target in
+            target.fileSystemSynchronizedGroups?.contains(self) == true
+        }.map(\.name)
+        return Set(groupTargets)
     }
 }

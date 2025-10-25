@@ -25,15 +25,10 @@ struct ConfigurationLoader {
         } else {
             configurationPath = root + defaultPath
         }
-
         guard fileManager.fileExists(atPath: configurationPath) else {
             throw ConfigurationLoaderError.configurationFileNotFound(configurationPath)
         }
-
-        if verbose {
-            vPrint("Loading configuration from: \(configurationPath)")
-        }
-
+        vPrint("Loading configuration from: \(configurationPath)")
         let data = try Data(contentsOf: URL(fileURLWithPath: configurationPath))
         let decoder = JSONDecoder()
         let configuration = try decoder.decode(Configuration.self, from: data)

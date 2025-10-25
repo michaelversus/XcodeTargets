@@ -17,8 +17,11 @@ struct XcodeTargets: ParsableCommand {
             configurationPath: configurationPath,
             rootPath: rootPath,
             fileManager: FileManager.default,
-            verbose: verbose,
-            vPrint: {  print($0) }
+            vPrint: {
+                if verbose {
+                    print($0)
+                }
+            }
         )
         try compositionRoot.run()
     }
