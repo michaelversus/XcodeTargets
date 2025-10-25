@@ -115,7 +115,10 @@ extension Dictionary where Key == String, Value == TargetModel {
 
     func printSummary() {
         for (targetName, targetModel) in self.sorted(by: { $0.key < $1.key }) {
-            print("MK Target: \(targetName) total files: \(targetModel.buildableFilePaths.count + targetModel.sourceFilePaths.count + targetModel.resourceFilePaths.count)")
+            let totalFilesCount = targetModel.buildableFilePaths.count +
+            targetModel.sourceFilePaths.count +
+            targetModel.resourceFilePaths.count
+            print("Target: \(targetName) total files: \(totalFilesCount)")
             print("  Buildable files: \(targetModel.buildableFilePaths.count)")
             for buildableFilePath in targetModel.buildableFilePaths.sorted() {
                 print("\(targetName)    - \(buildableFilePath)")

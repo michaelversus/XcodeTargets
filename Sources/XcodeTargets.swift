@@ -3,13 +3,16 @@ import Foundation
 
 @main
 struct XcodeTargets: ParsableCommand {
-    //@Option(name: [.short, .customLong("config")], help: "The path of `.xcode-targets.json`.")
+    // @Option(name: [.short, .customLong("config")], help: "The path of `.xcode-targets.json`.")
     var configurationPath: String? = ".xcode-targets.json"
 
-    //@Option(name: .shortAndLong, help: "The rootPath of your project. If you omit this, the current directory will be used.")
+//    @Option(
+//        name: .shortAndLong,
+//        help: "The rootPath of your project. Defaults to current directory."
+//    )
     var rootPath: String? = "/Users/m.karagiorgos/iosnative/"
 
-    //@Option(name: .shortAndLong, help: "Flag to enable verbose output.")
+    // @Option(name: .shortAndLong, help: "Flag to enable verbose output.")
     var verbose: Bool = false
 
     func run() throws {

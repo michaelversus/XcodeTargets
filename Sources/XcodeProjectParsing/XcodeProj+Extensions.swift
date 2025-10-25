@@ -1,25 +1,6 @@
 import XcodeProj
 import Path
 
-extension XcodeProj {
-    var projectPath: AbsolutePath {
-        try! AbsolutePath(validating: path!.string)
-    }
-
-    var srcPath: AbsolutePath {
-        projectPath.parentDirectory
-    }
-
-    var srcPathString: String {
-        srcPath.pathString
-    }
-
-    func target(named: String) throws -> PBXTarget {
-        guard let target = pbxproj.targets(named: named).first else { throw XcodeProjectParser.Error.invalidTargetName(named) }
-        return target
-    }
-}
-
 extension PBXProj {
     func validateFileSystemSynchronizedRootGroups(
         root: String,
@@ -35,7 +16,10 @@ extension PBXProj {
             targets.isEmpty
         }
         guard groupPathsWithoutTargets.isEmpty else {
-            throw XcodeProjectParser.Error.forbiddenBuildableFoldersForGroups(groupPathsWithoutTargets.map { "\($0.key) (targets: \($0.value))" })
+            throw XcodeProjectParser.Error.forbiddenBuildableFoldersForGroups(
+                groupPathsWithoutTargets
+                    .map { "\($0.key) (targets: \($0.value))" }
+            )
         }
     }
 
@@ -46,7 +30,11 @@ extension PBXProj {
     ) throws -> [String: Set<String>] {
         var groupPathsWithTargets: [String: Set<String>] = [:]
         for group in fileSystemSynchronizedRootGroups {
-            guard let path = try group.fullPath(sourceRoot: root) else { throw XcodeProjectParser.Error.failedToResolveBuildableFolderPath(group.path ?? "nil") }
+            guard let path = try group.fullPath(sourceRoot: root) else {
+                throw XcodeProjectParser.Error.failedToResolveBuildableFolderPath(
+                    group.path ?? "nil"
+                )
+            }
             let linkedTargets = try group.linkedTargets(proj: self)
             if verbose {
                 vPrint("Targets: \(linkedTargets) for File System Synchronized Group at path: \(path)")

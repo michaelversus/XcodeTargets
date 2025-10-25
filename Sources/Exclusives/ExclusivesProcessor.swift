@@ -142,8 +142,8 @@ private extension ExclusivesProcessor {
     ) {
         guard !entries.isEmpty else { return }
         vPrint("Exclusive \(kind) found between targets \(targets):")
-        for e in entries.sorted() {
-            vPrint(" - \(e)")
+        for entry in entries.sorted() {
+            vPrint(" - \(entry)")
         }
     }
 }
