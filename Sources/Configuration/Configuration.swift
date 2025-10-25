@@ -24,7 +24,6 @@ extension Configuration {
     struct ForbiddenResourceSet: Codable, Equatable {
         let targets: [String]
         let paths: [String]?
-        let files: [String]?
     }
 }
 

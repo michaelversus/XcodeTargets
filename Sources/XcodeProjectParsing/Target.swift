@@ -2,9 +2,9 @@ import Foundation
 
 struct Target {
     let name: String
-    let filePaths: Set<String>
-    let dependencies: Set<String>
-    let frameworks: Set<String>
+    var filePaths: Set<String>
+    var dependencies: Set<String>
+    var frameworks: Set<String>
 }
 
 extension Target {
