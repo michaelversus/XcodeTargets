@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import XcodeProj
 
 @main
 struct XcodeTargets: ParsableCommand {
@@ -30,7 +31,10 @@ struct XcodeTargets: ParsableCommand {
             rootPath: rootPath,
             fileSystem: fileSystem,
             print: { print($0) },
-            vPrint: { if verbose { print($0) } }
+            vPrint: { if verbose { print($0) } },
+            linkedTargetsProviderFactory: { group, proj in
+                LinkedTargetsProvider(group: group, proj: proj).linkedTargets()
+            }
         )
         try compositionRoot.run()
     }

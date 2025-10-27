@@ -1,4 +1,5 @@
 import Foundation
+import XcodeProj
 
 struct CompositionRoot {
     let configurationPath: String?
@@ -7,6 +8,7 @@ struct CompositionRoot {
     let defaultPath: String = ".xcode-targets.json"
     let vPrint: (String) -> Void
     let print: (String) -> Void
+    private let linkedTargetsProviderFactory: (PBXFileSystemSynchronizedRootGroup, PBXProj) -> Set<String>
 
     var root: String {
         let rootPath = rootPath ?? fileSystem.currentDirectoryPath
@@ -22,13 +24,15 @@ struct CompositionRoot {
         rootPath: String?,
         fileSystem: FileSystemProvider,
         print: @escaping (String) -> Void,
-        vPrint: @escaping (String) -> Void
+        vPrint: @escaping (String) -> Void,
+        linkedTargetsProviderFactory: @escaping (PBXFileSystemSynchronizedRootGroup, PBXProj) -> Set<String>
     ) {
         self.configurationPath = configurationPath
         self.rootPath = rootPath ?? fileSystem.currentDirectoryPath
         self.fileSystem = fileSystem
         self.print = print
         self.vPrint = vPrint
+        self.linkedTargetsProviderFactory = linkedTargetsProviderFactory
     }
 
     func run() throws {
@@ -46,7 +50,8 @@ struct CompositionRoot {
             fileSystem: fileSystem,
             configuration: configuration,
             print: print,
-            vPrint: vPrint
+            vPrint: vPrint,
+            linkedTargetsProviderFactory: linkedTargetsProviderFactory
         )
         let targetsIndex = try parser.parseXcodeProject(at: projectPath, root: root)
 

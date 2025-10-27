@@ -1,16 +1,34 @@
 import Foundation
 
+/// Processes exclusive entries (files, dependencies, frameworks) across groups of targets defined in a `Configuration`.
+///
+/// Phase 1: Prunes any entries declared as exclusive for a target.
+/// Phase 2: Validates that after pruning, no residual exclusive differences remain among grouped targets. If differences are still present it throws `ExclusivesError.exclusiveEntriesFound`.
+///
+/// Verbose diagnostic lines are emitted through the injected `vPrint` closure when residual exclusives are detected.
 struct ExclusivesProcessor {
+    /// Result of processing exclusive entries containing the pruned concrete `Target` models indexed by target name.
     struct Result {
         let prunedTargets: [String: Target]
     }
 
+    /// Closure used for verbose logging of exclusive entry diagnostics.
     let vPrint: (String) -> Void
 
+    /// Initializes an instance.
+    /// - Parameter vPrint: Closure invoked with human readable diagnostic messages.
     init(vPrint: @escaping (String) -> Void) {
         self.vPrint = vPrint
     }
 
+    /// Prunes exclusive entries and validates no residual exclusives remain.
+    /// - Parameters:
+    ///   - configuration: The configuration containing file membership sets and exclusives definitions.
+    ///   - originalTargetsIndex: Mapping of target names to their `TargetModel` representations prior to pruning.
+    /// - Returns: A `Result` containing pruned concrete `Target` models.
+    /// - Throws: `ExclusivesError.invalidTargetName` if an exclusive references a missing target.
+    ///           `ExclusivesError.invalidPathForTarget` if an exclusive path pattern matches nothing.
+    ///           `ExclusivesError.exclusiveEntriesFound` if differences remain after pruning.
     @discardableResult
     func process(
         configuration: Configuration,

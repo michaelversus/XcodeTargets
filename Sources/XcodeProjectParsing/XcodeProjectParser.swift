@@ -7,17 +7,20 @@ struct XcodeProjectParser {
     private let configuration: Configuration
     private let print: (String) -> Void
     private let vPrint: (String) -> Void
+    private let linkedTargetsProviderFactory: (PBXFileSystemSynchronizedRootGroup, PBXProj) -> Set<String>
 
     init(
         fileSystem: FileSystemProvider,
         configuration: Configuration,
         print: @escaping (String) -> Void,
-        vPrint: @escaping (String) -> Void
+        vPrint: @escaping (String) -> Void,
+        linkedTargetsProviderFactory: @escaping (PBXFileSystemSynchronizedRootGroup, PBXProj) -> Set<String>
     ) {
         self.fileSystem = fileSystem
         self.configuration = configuration
         self.print = print
         self.vPrint = vPrint
+        self.linkedTargetsProviderFactory = linkedTargetsProviderFactory
     }
 
     enum Error: Swift.Error, CustomStringConvertible, Equatable {
@@ -148,7 +151,7 @@ private extension XcodeProjectParser {
         guard let groupPath = try group.fullPath(sourceRoot: root) else {
             throw Error.failedToResolveBuildableFolderPath(group.path ?? "nil")
         }
-        let linkedTargets = try group.linkedTargets(proj: proj)
+        let linkedTargets =  linkedTargetsProviderFactory(group, proj)
         let groupFiles = try fileSystem.allFilePaths(in: groupPath)
         var groupFilesIndex = linkedTargets.reduce([String: Set<String>]()) { result, targetName in
             var mutableResult = result
