@@ -267,7 +267,13 @@ private extension XcodeProjectParser {
         in targetName: String,
         context: String
     ) throws {
-        guard configuration.duplicatesValidationExcludedTargets?.contains(targetName) == false else {
+        guard
+            let duplicatesValidationExcludedTargets = configuration.duplicatesValidationExcludedTargets
+        else {
+            try items.duplicatesValidation(context: context)
+            return
+        }
+        guard duplicatesValidationExcludedTargets.contains(targetName) == false else {
             return
         }
         try items.duplicatesValidation(context: context)

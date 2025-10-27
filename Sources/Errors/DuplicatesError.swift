@@ -1,6 +1,6 @@
 import Foundation
 
-enum DuplicatesError: Error, CustomStringConvertible {
+enum DuplicatesError: Error, CustomStringConvertible, Equatable {
     case duplicateEntries(duplicates: [String], context: String)
 
     var description: String {
