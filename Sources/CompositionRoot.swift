@@ -3,12 +3,13 @@ import Foundation
 struct CompositionRoot {
     let configurationPath: String?
     let rootPath: String?
-    let fileManager: FileManagerProtocol
+    let fileSystem: FileSystemProvider
     let defaultPath: String = ".xcode-targets.json"
     let vPrint: (String) -> Void
+    let print: (String) -> Void
 
     var root: String {
-        let rootPath = rootPath ?? fileManager.currentDirectoryPath
+        let rootPath = rootPath ?? fileSystem.currentDirectoryPath
         if rootPath.hasSuffix("/") {
             return rootPath
         } else {
@@ -17,22 +18,24 @@ struct CompositionRoot {
     }
 
     init(
-        configurationPath: String? = nil,
-        rootPath: String? = nil,
-        fileManager: FileManagerProtocol,
-        vPrint: @escaping (String) -> Void = { print($0) }
+        configurationPath: String?,
+        rootPath: String?,
+        fileSystem: FileSystemProvider,
+        print: @escaping (String) -> Void,
+        vPrint: @escaping (String) -> Void
     ) {
         self.configurationPath = configurationPath
-        self.rootPath = rootPath ?? fileManager.currentDirectoryPath
-        self.fileManager = fileManager
+        self.rootPath = rootPath ?? fileSystem.currentDirectoryPath
+        self.fileSystem = fileSystem
+        self.print = print
         self.vPrint = vPrint
     }
 
     func run() throws {
         let configurationLoader = ConfigurationLoader(
-            fileManager: fileManager,
+            fileSystem: fileSystem,
             defaultPath: defaultPath,
-            vPrint: vPrint
+            print: print
         )
         let configuration = try configurationLoader.loadConfiguration(
             at: configurationPath,
@@ -40,8 +43,9 @@ struct CompositionRoot {
         )
         let projectPath = root + configuration.name + ".xcodeproj"
         let parser = XcodeProjectParser(
-            fileManager: fileManager,
+            fileSystem: fileSystem,
             configuration: configuration,
+            print: print,
             vPrint: vPrint
         )
         let targetsIndex = try parser.parseXcodeProject(at: projectPath, root: root)
@@ -65,5 +69,7 @@ struct CompositionRoot {
             configuration: configuration,
             targetsIndex: targetsIndex
         )
+        // Final message
+        print("✅ Xcode Targets validation completed successfully.")
     }
 }

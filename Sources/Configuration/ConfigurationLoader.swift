@@ -1,21 +1,18 @@
 import Foundation
 
 struct ConfigurationLoader {
-    let fileManager: FileManagerProtocol
-    let verbose: Bool
+    let fileSystem: FileSystemProvider
     let defaultPath: String
-    let vPrint: (String) -> Void
+    let print: (String) -> Void
 
     init(
-        fileManager: FileManagerProtocol,
-        verbose: Bool = false,
+        fileSystem: FileSystemProvider,
         defaultPath: String = ".xcode-targets.json",
-        vPrint: @escaping (String) -> Void = { print($0) }
+        print: @escaping (String) -> Void
     ) {
-        self.fileManager = fileManager
-        self.verbose = verbose
+        self.fileSystem = fileSystem
         self.defaultPath = defaultPath
-        self.vPrint = vPrint
+        self.print = print
     }
 
     func loadConfiguration(at path: String?, root: String) throws -> Configuration {
@@ -25,10 +22,10 @@ struct ConfigurationLoader {
         } else {
             configurationPath = root + defaultPath
         }
-        guard fileManager.fileExists(atPath: configurationPath) else {
+        guard fileSystem.fileExists(atPath: configurationPath) else {
             throw ConfigurationLoaderError.configurationFileNotFound(configurationPath)
         }
-        vPrint("Loading configuration from: \(configurationPath)")
+        print("Loading configuration from: \(configurationPath)")
         let data = try Data(contentsOf: URL(fileURLWithPath: configurationPath))
         let decoder = JSONDecoder()
         let configuration = try decoder.decode(Configuration.self, from: data)

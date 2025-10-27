@@ -16,15 +16,21 @@ struct XcodeTargets: ParsableCommand {
     var verbose: Bool = false
 
     func run() throws {
+        let fileSystem = FileSystem(
+            fileManager: FileManager.default,
+            enumeratorFactory: { url in
+                FileManager.default.enumerator(
+                    at: url,
+                    includingPropertiesForKeys: nil
+                )
+            }
+        )
         let compositionRoot = CompositionRoot(
             configurationPath: configurationPath,
             rootPath: rootPath,
-            fileManager: FileManager.default,
-            vPrint: {
-                if verbose {
-                    print($0)
-                }
-            }
+            fileSystem: fileSystem,
+            print: { print($0) },
+            vPrint: { if verbose { print($0) } }
         )
         try compositionRoot.run()
     }

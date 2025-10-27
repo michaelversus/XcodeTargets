@@ -1,7 +1,7 @@
 @testable import XcodeTargets
 import Foundation
 
-final class FileManagerMock: FileManagerProtocol {
+final class FileSystemMock: FileSystemProvider {
     var currentDirectoryPath: String = ""
     var actions: [Action] = []
     var fileExistsReturnValue: Bool = false
@@ -11,7 +11,6 @@ final class FileManagerMock: FileManagerProtocol {
     enum Action: Equatable {
         case fileExists(atPath: String)
         case allFiles(inDirectoryPath: String)
-        case allFiles(inDirectoryURL: URL, membershipExceptions: Set<MembershipException>)
     }
 
     init(
@@ -31,13 +30,8 @@ final class FileManagerMock: FileManagerProtocol {
         return fileExistsReturnValue
     }
 
-    func allFiles(in directoryPath: String) throws -> Set<String> {
+    func allFilePaths(in directoryPath: String) throws -> Set<String> {
         actions.append(.allFiles(inDirectoryPath: directoryPath))
         return allFilePathsReturnValue
-    }
-
-    func allFiles(in directoryURL: URL, membershipExceptions: Set<MembershipException>) throws -> Set<URL> {
-        actions.append(.allFiles(inDirectoryURL: directoryURL, membershipExceptions: membershipExceptions))
-        return allFileURLsReturnValue
     }
 }

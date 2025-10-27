@@ -1,6 +1,6 @@
 import Foundation
 
-struct TargetModel {
+struct TargetModel: Equatable {
     let name: String
     let buildableFilePaths: Set<String>
     let sourceFilePaths: Set<String>
@@ -113,7 +113,10 @@ extension Dictionary where Key == String, Value == TargetModel {
         }
     }
 
-    func printSummary() {
+    func printSummary(
+        print: @escaping (String) -> Void,
+        vPrint: @escaping (String) -> Void
+    ) {
         for (targetName, targetModel) in self.sorted(by: { $0.key < $1.key }) {
             let totalFilesCount = targetModel.buildableFilePaths.count +
             targetModel.sourceFilePaths.count +
@@ -121,23 +124,23 @@ extension Dictionary where Key == String, Value == TargetModel {
             print("Target: \(targetName) total files: \(totalFilesCount)")
             print("  Buildable files: \(targetModel.buildableFilePaths.count)")
             for buildableFilePath in targetModel.buildableFilePaths.sorted() {
-                print("\(targetName)    - \(buildableFilePath)")
+                vPrint("\(targetName) - \(buildableFilePath)")
             }
             print("  Source files: \(targetModel.sourceFilePaths.count)")
             for sourceFilePath in targetModel.sourceFilePaths.sorted() {
-                print(" \(targetName)   - \(sourceFilePath)")
+                vPrint("\(targetName) - \(sourceFilePath)")
             }
             print("  Resource files: \(targetModel.resourceFilePaths.count)")
             for resourceFilePath in targetModel.resourceFilePaths.sorted() {
-                print("\(targetName)    - \(resourceFilePath)")
+                vPrint("\(targetName) - \(resourceFilePath)")
             }
             print("  Dependencies: \(targetModel.dependencies.count)")
             for dependency in targetModel.dependencies.sorted() {
-                print("\(targetName)    - \(dependency)")
+                vPrint("\(targetName) - \(dependency)")
             }
             print("  Frameworks: \(targetModel.frameworks.count)")
             for framework in targetModel.frameworks.sorted() {
-                print("\(targetName)    - \(framework)")
+                vPrint("\(targetName) - \(framework)")
             }
         }
     }

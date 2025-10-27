@@ -1,6 +1,6 @@
 import Foundation
 
-struct Target {
+struct Target: Equatable {
     let name: String
     var filePaths: Set<String>
     var dependencies: Set<String>
@@ -15,16 +15,55 @@ extension Target {
 
 // MARK: - Difference Target computation
 extension Dictionary where Key == String, Value == Target {
-    /// Returns a new `Target` whose sets contain only the elements that are **not common to all** targets
-    /// in the dictionary. For each property (filePaths, dependencies, frameworks):
-    ///  - Compute the union of all sets
-    ///  - Compute the intersection of all sets (elements present in every target)
-    ///  - The resulting set is union minus intersection (elements that differ among targets)
-    /// If the dictionary is empty, an empty target is returned.
-    /// - Parameter name: Optional name for the resulting target (default: "Difference")
+    /// Builds a synthetic `Target` whose sets contain only the elements that are **not common to all** targets
+    /// in the dictionary.
+    ///
+    /// For each property (`filePaths`, `dependencies`, `frameworks`):
+    /// 1. Compute the union of all sets (every element that appears at least once).
+    /// 2. Compute the intersection of all sets (every element that appears in **every** target).
+    /// 3. Return `union − intersection`, i.e. the elements that are present in at least one target but **not** in all.
+    ///
+    /// This lets you quickly see what varies across a collection of targets (the "differences") while omitting
+    /// the completely shared core.
+    ///
+    /// Notes:
+    /// - If the dictionary is empty, an empty `Target` is returned.
+    /// - If all targets have identical sets for a property, that property's resulting set will be empty.
+    /// - This is **not** a symmetric difference pairwise; it specifically removes elements common to *all* targets.
+    ///
+    /// - Parameter name: Optional name for the resulting target (default: "Difference").
+    /// - Returns: A `Target` whose sets contain only non-universally-shared elements.
+    ///
+    /// Example 1 (dependencies differ):
+    /// ```swift
+    /// let t1 = Target(name: "A", filePaths: ["A.swift"], dependencies: ["Core"], frameworks: ["UIKit"])
+    /// let t2 = Target(name: "B", filePaths: ["B.swift"], dependencies: ["Core", "Networking"], frameworks: ["UIKit"])
+    /// let dict: [String: Target] = ["A": t1, "B": t2]
+    /// let diff = dict.differenceTarget()
+    /// // diff.filePaths = ["A.swift", "B.swift"] (each appears only in one target)
+    /// // diff.dependencies = ["Networking"] ("Core" is shared by all → removed)
+    /// // diff.frameworks = [] ("UIKit" shared by all → removed)
+    /// ```
+    ///
+    /// Example 2 (frameworks partly shared):
+    /// ```swift
+    /// let t1 = Target(name: "App", filePaths: ["App.swift"], dependencies: [], frameworks: ["UIKit", "Combine"])
+    /// let t2 = Target(name: "Widget", filePaths: ["Widget.swift"], dependencies: [], frameworks: ["UIKit"])
+    /// let dict: [String: Target] = ["App": t1, "Widget": t2]
+    /// let diff = dict.differenceTarget(named: "VaryingPieces")
+    /// // diff.name == "VaryingPieces"
+    /// // diff.filePaths = ["App.swift", "Widget.swift"]
+    /// // diff.dependencies = []
+    /// // diff.frameworks = ["Combine"] (only in App; "UIKit" shared and removed)
+    /// ```
     func differenceTarget(named name: String = "Difference") -> Target {
-        guard !isEmpty else {
-            return Target(name: name, filePaths: [], dependencies: [], frameworks: [])
+        guard count > 1 else {
+            return Target(
+                name: name,
+                filePaths: [],
+                dependencies: [],
+                frameworks: []
+            )
         }
         let targets = Array(values)
 

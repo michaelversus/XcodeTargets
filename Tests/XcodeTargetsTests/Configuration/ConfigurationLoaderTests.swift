@@ -4,12 +4,12 @@ import Testing
 
 @Suite("ConfigLoader Tests")
 struct ConfigLoaderTests {
-    var fileManager = FileManagerMock()
+    var fileSystem = FileSystemMock()
 
     @Test("test Load config from file")
     func testLoadConfigFromFile() throws {
         // Given
-        fileManager.fileExistsReturnValue = true
+        fileSystem.fileExistsReturnValue = true
         let rootPath = URL.Mock.exampleConfig.deletingLastPathComponent().path + "/"
         let configPath = "xcode-targets.json"
         let sut = makeSut()
@@ -24,7 +24,7 @@ struct ConfigLoaderTests {
     @Test("test Load config from default path")
     func testLoadConfigFromDefaultPath() throws {
         // Given
-        fileManager.fileExistsReturnValue = true
+        fileSystem.fileExistsReturnValue = true
         let rootPath = URL.Mock.exampleConfig.deletingLastPathComponent().path + "/"
         let sut = makeSut(defaultPath: "xcode-targets.json")
 
@@ -38,7 +38,7 @@ struct ConfigLoaderTests {
     @Test("test Load config file not found throws error")
     func testLoadConfigFileNotFoundThrowsError() throws {
         // Given
-        fileManager.fileExistsReturnValue = false
+        fileSystem.fileExistsReturnValue = false
         let rootPath = URL.Mock.exampleConfig.deletingLastPathComponent().path + "/"
         let sut = makeSut()
 
@@ -54,11 +54,11 @@ struct ConfigLoaderTests {
     @Test("test Load config verbose prints message")
     func testLoadConfigVerbosePrintsMessage() throws {
         // Given
-        fileManager.fileExistsReturnValue = true
+        fileSystem.fileExistsReturnValue = true
         let rootPath = URL.Mock.exampleConfig.deletingLastPathComponent().path + "/"
         let configPath = "xcode-targets.json"
         var verboseMessages: [String] = []
-        let sut = makeSut(verbose: true) { message in
+        let sut = makeSut() { message in
             verboseMessages.append(message)
         }
 
@@ -74,15 +74,13 @@ struct ConfigLoaderTests {
 
 extension ConfigLoaderTests {
     func makeSut(
-        verbose: Bool = false,
         defaultPath: String = ".xcode-targets.json",
-        vPrint: @escaping (String) -> Void = { _ in }
+        print: @escaping (String) -> Void = { _ in }
     ) -> ConfigurationLoader {
         ConfigurationLoader(
-            fileManager: fileManager,
-            verbose: verbose,
+            fileSystem: fileSystem,
             defaultPath: defaultPath,
-            vPrint: vPrint
+            print: print
         )
     }
 }

@@ -38,4 +38,11 @@ extension Configuration {
         ],
         duplicatesValidationExcludedTargets: []
     )
+
+    static let empty = Configuration(
+        name: "Empty",
+        fileMembershipSets: [],
+        forbiddenResourceSets: nil,
+        duplicatesValidationExcludedTargets: nil
+    )
 }

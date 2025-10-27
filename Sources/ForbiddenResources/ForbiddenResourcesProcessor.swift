@@ -1,19 +1,6 @@
 import Foundation
 
 struct ForbiddenResourcesProcessor {
-    struct ForbiddenResourceError: LocalizedError {
-        let targetName: String
-        let matchingPaths: Set<String>
-
-        var errorDescription: String {
-            "❌ Forbidden resource(s) found in target \(targetName):\n" +
-            matchingPaths
-                .map { " - \($0)" }
-                .sorted()
-                .joined(separator: "\n")
-        }
-    }
-
     let vPrint: (String) -> Void
 
     init(vPrint: @escaping (String) -> Void) {
@@ -25,7 +12,12 @@ struct ForbiddenResourcesProcessor {
         targetsIndex: [String: TargetModel]
     ) throws {
         for forbiddenResourceSet in configuration.forbiddenResourceSets ?? [] {
-            vPrint("Processing forbidden resource set for targets: \(forbiddenResourceSet.targets)")
+            guard !forbiddenResourceSet.targets.isEmpty else {
+                vPrint("Warning: Forbidden resource set has no targets defined, skipping.")
+                continue
+            }
+            let processingTargetsString = forbiddenResourceSet.targets.joined(separator: ", ")
+            vPrint("Processing forbidden resource set for targets: \(processingTargetsString)")
 
             for targetName in forbiddenResourceSet.targets {
                 guard let target = targetsIndex[targetName] else {
@@ -39,6 +31,11 @@ struct ForbiddenResourcesProcessor {
                         throw ForbiddenResourceError(
                             targetName: targetName,
                             matchingPaths: matchingPaths
+                        )
+                    } else {
+                        vPrint(
+                            "No forbidden resources found in target \(targetName) " +
+                            "for path \(forbiddenResourcePath)."
                         )
                     }
                 }

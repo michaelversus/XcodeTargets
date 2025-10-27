@@ -3,17 +3,20 @@ import XcodeProj
 import Foundation
 
 struct XcodeProjectParser {
-    private let fileManager: FileManagerProtocol
+    private let fileSystem: FileSystemProvider
     private let configuration: Configuration
+    private let print: (String) -> Void
     private let vPrint: (String) -> Void
 
     init(
-        fileManager: FileManagerProtocol,
+        fileSystem: FileSystemProvider,
         configuration: Configuration,
+        print: @escaping (String) -> Void,
         vPrint: @escaping (String) -> Void
     ) {
-        self.fileManager = fileManager
+        self.fileSystem = fileSystem
         self.configuration = configuration
+        self.print = print
         self.vPrint = vPrint
     }
 
@@ -48,6 +51,7 @@ struct XcodeProjectParser {
         root: String
     ) throws -> [String: TargetModel] {
         let xcodeproj = try makeProject(at: path)
+        print("Parsing Xcode project at path: \(path)")
         var targetsIndex: [String: TargetModel] = try parseTargets(
             proj: xcodeproj,
             root: root
@@ -57,7 +61,10 @@ struct XcodeProjectParser {
             root: root,
             targetsIndex: &targetsIndex
         )
-        targetsIndex.printSummary()
+        targetsIndex.printSummary(
+            print: print,
+            vPrint: vPrint
+        )
         return targetsIndex
     }
 }
@@ -73,7 +80,7 @@ private extension XcodeProjectParser {
     ) throws -> [String: TargetModel] {
         var index: [String: TargetModel] = [:]
         for target in proj.pbxproj.nativeTargets {
-            vPrint("Target name: \(target.name)")
+            print("Parsing Target: \(target.name)")
             let sourceFilePaths = try extractReferencedSourceFiles(
                 target: target,
                 root: root
@@ -142,7 +149,7 @@ private extension XcodeProjectParser {
             throw Error.failedToResolveBuildableFolderPath(group.path ?? "nil")
         }
         let linkedTargets = try group.linkedTargets(proj: proj)
-        let groupFiles = try fileManager.allFiles(in: groupPath)
+        let groupFiles = try fileSystem.allFilePaths(in: groupPath)
         var groupFilesIndex = linkedTargets.reduce([String: Set<String>]()) { result, targetName in
             var mutableResult = result
             mutableResult[targetName] = groupFiles
