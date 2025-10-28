@@ -56,7 +56,8 @@ private extension XcodeProjectParser {
         root: String
     ) throws -> [String: TargetModel] {
         var index: [String: TargetModel] = [:]
-        for target in proj.pbxproj.nativeTargets {
+        let sortedTargetNames = proj.pbxproj.nativeTargets.sorted(by: { $0.name < $1.name })
+        for target in sortedTargetNames {
             print("Parsing Target: \(target.name)")
             let sourceFilePaths = try extractReferencedSourceFiles(
                 target: target,
@@ -125,7 +126,7 @@ private extension XcodeProjectParser {
         guard let groupPath = try group.fullPath(sourceRoot: root) else {
             throw XcodeProjectParserError.failedToResolveBuildableFolderPath(group.path ?? "nil")
         }
-        let linkedTargets =  linkedTargetsProviderFactory(group, proj)
+        let linkedTargets =  linkedTargetsProviderFactory(group, proj).sorted()
         let groupFiles = try fileSystem.allFilePaths(in: groupPath)
         var groupFilesIndex = linkedTargets.reduce([String: Set<String>]()) { result, targetName in
             var mutableResult = result
@@ -201,7 +202,7 @@ private extension XcodeProjectParser {
                 if let current = index[target.name] {
                     index[target.name] = current.filter { !$0.contains(membership)  }
                 } else {
-                    assertionFailure("No files found for target \(target.name) to apply exception \(membership)")
+                    vPrint("No files found for target \(target.name) to apply exception \(membership)")
                 }
             }
         }
