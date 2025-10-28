@@ -2,6 +2,9 @@ import PathKit
 import XcodeProj
 import Foundation
 
+/// Parses an Xcode project to build an index of target models, extracting source files, resources,
+/// frameworks, dependencies and buildable (synchronized) group file paths. Duplicate validation
+/// rules and exception handling are applied based on the provided `Configuration`.
 struct XcodeProjectParser {
     private let fileSystem: FileSystemProvider
     private let configuration: Configuration
@@ -9,6 +12,13 @@ struct XcodeProjectParser {
     private let vPrint: (String) -> Void
     private let linkedTargetsProviderFactory: (PBXFileSystemSynchronizedRootGroup, PBXProj) -> Set<String>
 
+    /// Initializes a new parser.
+    /// - Parameters:
+    ///   - fileSystem: Abstraction for file system access (e.g. listing files in synchronized groups).
+    ///   - configuration: Runtime configuration affecting duplicate validation exclusions.
+    ///   - print: Closure used for user‑facing output (summary and high‑level progress).
+    ///   - vPrint: Closure used for verbose / diagnostic output.
+    ///   - linkedTargetsProviderFactory: Factory closure producing the set of target names linked to a synchronized root group.
     init(
         fileSystem: FileSystemProvider,
         configuration: Configuration,
@@ -23,6 +33,15 @@ struct XcodeProjectParser {
         self.linkedTargetsProviderFactory = linkedTargetsProviderFactory
     }
 
+    /// Parses the Xcode project at the given path building an index keyed by target name.
+    /// The index aggregates source files, resource files, frameworks, dependencies and buildable files
+    /// (collected from file system synchronized root groups plus their exceptions).
+    /// - Parameters:
+    ///   - path: File system path to the *.xcodeproj bundle.
+    ///   - root: Absolute path to the project source root used by `XcodeProj` to resolve file references.
+    /// - Returns: Dictionary keyed by target name containing its aggregated `TargetModel`.
+    /// - Throws: `XcodeProjectParserError` when resolution of paths or exception targets fails, or
+    ///           other errors surfaced while loading the project or validating duplicates.
     func parseXcodeProject(
         at path: String,
         root: String
@@ -47,10 +66,20 @@ struct XcodeProjectParser {
 }
 
 private extension XcodeProjectParser {
+    /// Loads and initializes the `XcodeProj` representation for the project at the provided path.
+    /// - Parameter path: Path to the *.xcodeproj bundle.
+    /// - Returns: Parsed `XcodeProj` instance.
+    /// - Throws: Any error thrown by `XcodeProj` while reading the project structure.
     func makeProject(at path: String) throws -> XcodeProj {
         let projectPath = Path(path)
         return try XcodeProj(path: projectPath)
     }
+    /// Builds the initial target index containing source files, resources, dependencies and frameworks.
+    /// - Parameters:
+    ///   - proj: Parsed project wrapper.
+    ///   - root: Source root for resolving file references.
+    /// - Returns: Dictionary keyed by target name with preliminary `TargetModel` values (without buildable files yet).
+    /// - Throws: Errors while resolving file paths or duplicate validation failures.
     func parseTargets(
         proj: XcodeProj,
         root: String
@@ -102,6 +131,12 @@ private extension XcodeProjectParser {
         return index
     }
 
+    /// Enriches the target index with buildable files by traversing synchronized root groups and applying exceptions.
+    /// - Parameters:
+    ///   - proj: Parsed project wrapper (pbxproj used for group traversal).
+    ///   - root: Source root for path resolution.
+    ///   - targetsIndex: In/out target index updated with buildable file paths.
+    /// - Throws: Errors raised while resolving group paths or applying exception sets.
     func parseSynchronizedRootGroups(
         proj: XcodeProj,
         root: String,
@@ -117,6 +152,13 @@ private extension XcodeProjectParser {
         }
     }
 
+    /// Processes one synchronized root group, collecting its files and applying membership exceptions per target.
+    /// - Parameters:
+    ///   - group: The synchronized root group to process.
+    ///   - proj: Underlying PBX project reference for target resolution.
+    ///   - root: Source root.
+    ///   - targetsIndex: Index updated with buildable files.
+    /// - Throws: Parser errors when paths or exception targets/product types cannot be resolved.
     func processGroup(
         group: PBXFileSystemSynchronizedRootGroup,
         proj: PBXProj,
@@ -152,6 +194,13 @@ private extension XcodeProjectParser {
         )
     }
 
+    /// Applies each exception set found in a synchronized group, delegating to membership exception handling.
+    /// - Parameters:
+    ///   - exceptions: Collection of raw exception sets.
+    ///   - groupPath: Resolved path of the group being processed.
+    ///   - proj: PBX project for target lookups.
+    ///   - groupFilesIndex: In/out map of target name to its buildable files affected by exceptions.
+    /// - Throws: Parser errors when required target/product type metadata is missing.
     func applyExceptions(
         _ exceptions: [PBXFileSystemSynchronizedExceptionSet],
         groupPath: String,
@@ -176,6 +225,13 @@ private extension XcodeProjectParser {
         }
     }
 
+    /// Applies membership exceptions for a target within a synchronized group.
+    /// Test bundles add specified files; other product types remove matching file memberships.
+    /// - Parameters:
+    ///   - exceptionSet: Build file exception set describing membership changes.
+    ///   - groupPath: Base path of the synchronized group.
+    ///   - index: In/out index mapping target names to buildable files sets.
+    /// - Throws: Parser errors if target or product type metadata is missing.
     func applyMembershipExceptions(
         _ exceptionSet: PBXFileSystemSynchronizedBuildFileExceptionSet,
         groupPath: String,
@@ -208,6 +264,10 @@ private extension XcodeProjectParser {
         }
     }
 
+    /// Updates the master target index with buildable file paths for each target in the group index.
+    /// - Parameters:
+    ///   - targetsIndex: Master target index to update.
+    ///   - groupFilesIndex: Mapping of target name to collected buildable files.
     func updateTargetsIndex(
         _ targetsIndex: inout [String: TargetModel],
         with groupFilesIndex: [String: Set<String>]
@@ -220,6 +280,12 @@ private extension XcodeProjectParser {
         }
     }
 
+    /// Extracts full paths of referenced source files in a target's sources build phase.
+    /// - Parameters:
+    ///   - target: The native target whose source files are collected.
+    ///   - root: Source root used for path resolution.
+    /// - Returns: Array of resolved file paths (empty if none).
+    /// - Throws: Errors thrown during path resolution by `fullPath`.
     func extractReferencedSourceFiles(
         target: PBXNativeTarget,
         root: String
@@ -230,6 +296,10 @@ private extension XcodeProjectParser {
             } ?? []
     }
 
+    /// Extracts the names/paths of frameworks referenced in the framework build phase.
+    /// - Parameter target: Native target whose frameworks are collected.
+    /// - Returns: Array of product names or raw file paths for each framework.
+    /// - Throws: Errors during framework phase traversal.
     func extractFrameworks(_ target: PBXNativeTarget) throws -> [String] {
         try target.frameworksBuildPhase()?.files?
             .map {
@@ -237,6 +307,12 @@ private extension XcodeProjectParser {
             } ?? []
     }
 
+    /// Validates duplicate items unless the target is explicitly excluded in configuration.
+    /// - Parameters:
+    ///   - items: Items to check for duplicates.
+    ///   - targetName: Name of the target owning the items.
+    ///   - context: Human‑readable context (e.g. "Source File", "Resource").
+    /// - Throws: `DuplicatesError` surfaced via `duplicatesValidation` when duplicates are found.
     func validateDuplicatesIfNeeded(
         _ items: [String],
         in targetName: String,
@@ -254,6 +330,12 @@ private extension XcodeProjectParser {
         try items.duplicatesValidation(context: context)
     }
 
+    /// Collects resource file paths from a target's resources build phase, adjusting paths for .strings bundles.
+    /// - Parameters:
+    ///   - target: Native target whose resources are collected.
+    ///   - root: Source root for path resolution.
+    /// - Returns: Array of resource file paths (empty if none).
+    /// - Throws: Errors during path resolution for resource files.
     func collectResourceFiles(
         target: PBXNativeTarget,
         root: String

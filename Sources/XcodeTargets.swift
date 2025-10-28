@@ -33,7 +33,7 @@ struct XcodeTargets: ParsableCommand {
             print: { print($0) },
             vPrint: { if verbose { print($0) } },
             linkedTargetsProviderFactory: { group, proj in
-                LinkedTargetsProvider(group: group, proj: proj).linkedTargets()
+                LinkedTargetsProvider(proj: proj).linkedTargets(group: group)
             }
         )
         try compositionRoot.run()
