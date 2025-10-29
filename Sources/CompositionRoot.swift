@@ -98,7 +98,7 @@ struct CompositionRoot {
         // Check that they are not included in other targets.
         // Create new targets that don't have excluded files
         // Check if rest of files are common for all fileMembershipSets
-        let exclusivesProcessor = ExclusivesProcessor(vPrint: vPrint)
+        let exclusivesProcessor = ExclusivesProcessor(print: print)
         try exclusivesProcessor.process(
             configuration: configuration,
             originalTargetsIndex: targetsIndex

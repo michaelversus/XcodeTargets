@@ -5,7 +5,7 @@ import Testing
 final class ExclusivesProcessorTests {
     // Captured verbose messages
     var messages: [String] = []
-    lazy var vPrint: (String) -> Void = { [weak self] message in
+    lazy var print: (String) -> Void = { [weak self] message in
         self?.messages.append(message)
     }
 
@@ -334,6 +334,6 @@ final class ExclusivesProcessorTests {
 
 private extension ExclusivesProcessorTests {
     func makeSut() -> ExclusivesProcessor {
-        ExclusivesProcessor(vPrint: vPrint)
+        ExclusivesProcessor(print: print)
     }
 }

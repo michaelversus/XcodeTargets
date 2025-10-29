@@ -5,7 +5,7 @@ import Foundation
 /// Phase 1: Prunes any entries declared as exclusive for a target.
 /// Phase 2: Validates that after pruning, no residual exclusive differences remain among grouped targets. If differences are still present it throws `ExclusivesError.exclusiveEntriesFound`.
 ///
-/// Verbose diagnostic lines are emitted through the injected `vPrint` closure when residual exclusives are detected.
+/// Verbose diagnostic lines are emitted through the injected `print` closure when residual exclusives are detected.
 struct ExclusivesProcessor {
     /// Result of processing exclusive entries containing the pruned concrete `Target` models indexed by target name.
     struct Result {
@@ -13,12 +13,12 @@ struct ExclusivesProcessor {
     }
 
     /// Closure used for verbose logging of exclusive entry diagnostics.
-    let vPrint: (String) -> Void
+    let print: (String) -> Void
 
     /// Initializes an instance.
-    /// - Parameter vPrint: Closure invoked with human readable diagnostic messages.
-    init(vPrint: @escaping (String) -> Void) {
-        self.vPrint = vPrint
+    /// - Parameter print: Closure invoked with human readable diagnostic messages.
+    init(print: @escaping (String) -> Void) {
+        self.print = print
     }
 
     /// Prunes exclusive entries and validates no residual exclusives remain.
@@ -159,9 +159,9 @@ private extension ExclusivesProcessor {
         targets: String
     ) {
         guard !entries.isEmpty else { return }
-        vPrint("Exclusive \(kind) found between targets \(targets):")
+        print("Exclusive \(kind) found between targets \(targets):")
         for entry in entries.sorted() {
-            vPrint(" - \(entry)")
+            print(" - \(entry)")
         }
     }
 }
