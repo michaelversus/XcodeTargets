@@ -7,6 +7,61 @@
 ///   alignment of files, dependencies, and frameworks across grouped targets.
 /// - ForbiddenResourcesProcessor validates `forbiddenResourceSets` to ensure no disallowed resource paths exist.
 /// - XcodeProjectParser consults `duplicatesValidationExcludedTargets` to skip duplicate checks for specified targets.
+///
+/// Example JSON (full):
+/// ```json
+/// {
+///     "name": "MyProject",
+///     "fileMembershipSets": [
+///         {
+///             "targets": ["App", "AppStaging", "AppProd"],
+///             "exclusive": {
+///                 "AppStaging": {
+///                     "files": ["Config/Staging/*", "Features/DebugPanel/"],
+///                     "dependencies": ["StagingAnalytics"],
+///                     "frameworks": ["StagingSDK"]
+///                 },
+///                 "AppProd": {
+///                     "files": ["Config/Prod/*"],
+///                     "dependencies": ["ProdAnalytics"],
+///                     "frameworks": ["ProdSDK"]
+///                 }
+///             }
+///         },
+///         {
+///             "targets": ["Widget", "WidgetExtension"],
+///             "exclusive": {
+///                 "WidgetExtension": {
+///                     "files": ["WidgetExtensionSpecific/*"],
+///                     "dependencies": ["WidgetExtensionSupport"],
+///                     "frameworks": []
+///                 }
+///             }
+///         }
+///     ],
+///     "forbiddenResourceSets": [
+///         {
+///             "targets": ["App", "AppStaging", "AppProd"],
+///             "paths": ["/Debug/", "Temporary/"]
+///         },
+///         {
+///             "targets": ["Widget"],
+///             "paths": ["LargeAssets/"]
+///         }
+///     ],
+///     "duplicatesValidationExcludedTargets": ["Tests", "UITests"]
+/// }
+/// ```
+///
+/// Minimal JSON (only required keys):
+/// ```json
+/// {
+///     "name": "MyProject",
+///     "fileMembershipSets": [
+///         { "targets": ["App"] }
+///     ]
+/// }
+/// ```
 struct Configuration: Codable, Equatable {
     /// Logical name of the Xcode project (without the `.xcodeproj` extension).
     /// Used to construct the project path.

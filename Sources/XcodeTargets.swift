@@ -2,20 +2,38 @@ import ArgumentParser
 import Foundation
 import XcodeProj
 
+/// Entry point for the `xcode-targets` command line tool.
+///
+/// The command loads and validates an `.xcode-targets.json` configuration file and
+/// processes Xcode project targets to detect duplicates, exclusives, and forbidden resources.
+///
+/// Usage example:
+///     xcode-targets --config path/to/.xcode-targets.json --rootPath /path/to/project --verbose
+///
+/// Provide `--verbose` (or `-v`) to enable additional diagnostic output.
 @main
 struct XcodeTargets: ParsableCommand {
-    // @Option(name: [.short, .customLong("config")], help: "The path of `.xcode-targets.json`.")
-    var configurationPath: String? = ".xcode-targets.json"
+    /// The path to the `.xcode-targets.json` configuration file.
+    /// If omitted, the tool attempts to locate a configuration in the current directory.
+    @Option(name: [.short, .customLong("config")], help: "The path of `.xcode-targets.json`.")
+    var configurationPath: String? //= ".xcode-targets.json"
 
-//    @Option(
-//        name: .shortAndLong,
-//        help: "The rootPath of your project. Defaults to current directory."
-//    )
-    var rootPath: String? = "/Users/m.karagiorgos/iosnative/"
+    /// The root path of the project to analyze.
+    /// Defaults to the current working directory when not provided.
+    @Option(
+        name: .shortAndLong,
+        help: "The rootPath of your project. Defaults to current directory."
+    )
+    var rootPath: String? //= "/Users/m.karagiorgos/iosnative/"
 
-    // @Option(name: .shortAndLong, help: "Flag to enable verbose output.")
+    /// Flag to enable verbose output for diagnostic purposes.
+    @Option(name: .shortAndLong, help: "Flag to enable verbose output.")
     var verbose: Bool = false
 
+    /// Executes the command: loads configuration, initializes dependencies, and runs processing.
+    ///
+    /// - Throws: Rethrows any errors encountered during configuration loading, file system access,
+    ///           or Xcode project parsing and validation.
     func run() throws {
         let fileSystem = FileSystem(
             fileManager: FileManager.default,
