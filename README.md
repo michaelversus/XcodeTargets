@@ -13,7 +13,7 @@ An SPM CLI tool that validates multiple Xcode project targets for common files, 
 ## 🛠️ Instalation
 
 ```bash
-brew tap michaelversus/xcodetargets https://github.com/michaelversus/xcodetargets
+brew tap michaelversus/xcodetargets https://github.com/michaelversus/XcodeTargets.git
 brew install xcodetargets
 ```
 
