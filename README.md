@@ -1,6 +1,6 @@
 <p align="center">
     <img src="https://img.shields.io/badge/Swift-6.0-red.svg" />
-    <img src="https://codecov.io/gh/michaelversus/XcodeTargets/branch/main/graph/badge.svg?token=K8H49TQ6SZ"/>
+    <img src="https://codecov.io/gh/michaelversus/XcodeTargets/graph/badge.svg?token=HH7KVALXSY"/>
 </p>
 
 <p align="center">
@@ -27,7 +27,6 @@ You can customize the behavior of **XcodeTargets** by creating a **.xcode-target
 
 Example:
 ```json
- ```json
  {
     "name": "MyProject",
     "fileMembershipSets": [
