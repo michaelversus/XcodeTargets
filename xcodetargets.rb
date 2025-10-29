@@ -1,8 +1,8 @@
 class Xcodetargets < Formula
   desc "Swift implicit import checks for SPM packages and Xcodeproj"
   homepage "https://github.com/michaelversus/XcodeTargets"
-  url "https://github.com/michaelversus/XcodeTargets.git", tag: "0.1.2"
-  version "0.1.2"
+  url "https://github.com/michaelversus/XcodeTargets.git", tag: "0.1.4"
+  version "0.1.4"
 
   depends_on "xcode": [:build]
 
