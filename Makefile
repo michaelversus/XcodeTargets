@@ -8,10 +8,10 @@ build:
 
 install: build
 	install -d "$(bindir)"
-	install ".build/release/XcodeTargets" "$(bindir)"
+	install ".build/release/Xcodetargets" "$(bindir)"
 
 uninstall:
-	rm -rf "$(bindir)/XcodeTargets"
+	rm -rf "$(bindir)/Xcodetargets"
 
 clean:
 	rm -rf .build
