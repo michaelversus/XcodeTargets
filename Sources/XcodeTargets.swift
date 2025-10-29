@@ -16,7 +16,7 @@ struct XcodeTargets: ParsableCommand {
     /// The path to the `.xcode-targets.json` configuration file.
     /// If omitted, the tool attempts to locate a configuration in the current directory.
     @Option(name: [.short, .customLong("config")], help: "The path of `.xcode-targets.json`.")
-    var configurationPath: String? //= ".xcode-targets.json"
+    var configurationPath: String?
 
     /// The root path of the project to analyze.
     /// Defaults to the current working directory when not provided.
@@ -24,7 +24,7 @@ struct XcodeTargets: ParsableCommand {
         name: .shortAndLong,
         help: "The rootPath of your project. Defaults to current directory."
     )
-    var rootPath: String? //= "/Users/m.karagiorgos/iosnative/"
+    var rootPath: String?
 
     /// Flag to enable verbose output for diagnostic purposes.
     @Option(name: .shortAndLong, help: "Flag to enable verbose output.")
