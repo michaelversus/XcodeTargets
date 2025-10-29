@@ -1,4 +1,4 @@
-class XcodeTargets < Formula
+class Xcodetargets < Formula
   desc "Swift implicit import checks for SPM packages and Xcodeproj"
   homepage "https://github.com/michaelversus/XcodeTargets"
   url "https://github.com/michaelversus/XcodeTargets.git", tag: "0.1.0"
@@ -11,6 +11,6 @@ class XcodeTargets < Formula
   end
 
   test do
-    system "#{bin}/XcodeTargets", "list"
+    system "#{bin}/Xcodetargets", "list"
   end
 end
