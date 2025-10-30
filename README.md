@@ -46,7 +46,7 @@ Example:
                     "frameworks": ["StagingSDK"]
                  },
                 "AppProd": {
-                    "files": ["Config/Prod/*"],
+                    "files": ["Config/Prod/.*"],
                     "dependencies": ["ProdAnalytics"],
                     "frameworks": ["ProdSDK"]
                 }
