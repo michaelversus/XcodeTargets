@@ -17,16 +17,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: SwiftyLab/setup-swift@latest
-    - name: Build
-      run: swift build
-    - name: Run tests
+    - name: Run tests with coverage
       run: swift test --enable-code-coverage
-    - name: Install llvm-cov plugin
-      run: brew install llvm
-    - name: Generate coverage report
-      run: llvm-cov export -format="lcov" .build/debug/XcodeTargetsPackageTests.xctest/Contents/MacOS/XcodeTargetsPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
-    - name: Upload coverage reports to Codecov
+    - name: Generate coverage report (lcov)
+      run: |
+        set -euo pipefail
+        BIN_PATH="$(swift build --show-bin-path)"
+        TEST_BUNDLE="${BIN_PATH}/XcodeTargetsPackageTests.xctest/Contents/MacOS/XcodeTargetsPackageTests"
+        PROF_DATA="${BIN_PATH}/codecov/default.profdata"
+        xcrun llvm-cov export \
+          -format=lcov \
+          "${TEST_BUNDLE}" \
+          -instr-profile "${PROF_DATA}" \
+          > info.lcov
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: michaelversus/XcodeTargets
+        files: info.lcov
+        fail_ci_if_error: true
+        verbose: true
