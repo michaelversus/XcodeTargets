@@ -91,7 +91,6 @@ xcodetargets -c path/to/.xcode-targets.json -r /path/to/project
 
 ## Credits
 XcodeTargets is build on top of
-- Apple's [SwiftSyntax](https://github.com/apple/swift-syntax) library for parsing code, which is available under the Apache License v2.0 with Runtime Library Exception.
 - tuist's [XcodeProj](https://github.com/tuist/XcodeProj) library for parsing the xcodeproj file, which is available under the MIT license.
 
 The implementation is inspired from the below ruby script:
