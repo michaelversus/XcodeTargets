@@ -13,7 +13,7 @@ struct ExclusivesErrorTests {
         let description = sut.description
 
         // Then
-        #expect(description == "❌ Target name MyTarget inside exclusive section doesn't exist in the project")
+        #expect(description == "error: ❌ Target name MyTarget inside exclusive section doesn't exist in the project")
     }
 
     @Test("test description of invalidPathForTarget")
@@ -25,7 +25,7 @@ struct ExclusivesErrorTests {
         let description = sut.description
 
         // Then
-        #expect(description == "❌ Path Sources/NonExistent inside exclusive section for target MyTarget doesn't exist in the project")
+        #expect(description == "error: ❌ Path Sources/NonExistent inside exclusive section for target MyTarget doesn't exist in the project")
     }
 
     @Test("test description of exclusiveEntriesFound")
@@ -37,6 +37,6 @@ struct ExclusivesErrorTests {
         let description = sut.description
 
         // Then
-        #expect(description == "❌ Exclusive entries found for targets: MyTarget1, MyTarget2")
+        #expect(description == "error: ❌ Exclusive entries found for targets: MyTarget1, MyTarget2")
     }
 }

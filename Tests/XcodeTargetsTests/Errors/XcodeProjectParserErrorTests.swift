@@ -14,7 +14,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        #expect(message == "❌ Invalid target name InvalidTarget")
+        #expect(message == "error: ❌ Invalid target name InvalidTarget")
     }
 
     @Test("test description with invalid path returns expected message")
@@ -27,7 +27,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        #expect(message == "❌ Invalid path Some/Invalid/Path")
+        #expect(message == "error: ❌ Invalid path Some/Invalid/Path")
     }
 
     @Test("test description with failed to resolve buildable folder path returns expected message")
@@ -40,7 +40,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        #expect(message == "❌ Failed to resolve buildable folder path Sources/Module/Buildable")
+        #expect(message == "error: ❌ Failed to resolve buildable folder path Sources/Module/Buildable")
     }
 
     @Test("test description with forbidden buildable folders for groups returns expected message")
@@ -53,7 +53,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        let expected = "❌ Forbidden buildable folders for groups: \nGroupA, \nGroupB, \nGroupC"
+        let expected = "error: ❌ Forbidden buildable folders for groups: \nGroupA, \nGroupB, \nGroupC"
         #expect(message == expected)
     }
 
@@ -67,7 +67,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        let expected = "❌ Forbidden buildable folders for groups: \n"
+        let expected = "error: ❌ Forbidden buildable folders for groups: \n"
         #expect(message == expected)
     }
 
@@ -81,7 +81,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        #expect(message == "❌ Exception set target is nil for group at path: Sources/Group/Path")
+        #expect(message == "error: ❌ Exception set target is nil for group at path: Sources/Group/Path")
     }
 
     @Test("test description with exception set target product type is nil returns expected message")
@@ -94,7 +94,7 @@ struct XcodeProjectParserErrorTests {
         let message = sut.description
 
         // Then
-        #expect(message == "❌ Exception set target product type is nil for group at path: Sources/Group/AnotherPath")
+        #expect(message == "error: ❌ Exception set target product type is nil for group at path: Sources/Group/AnotherPath")
     }
 
     // MARK: - Equatable

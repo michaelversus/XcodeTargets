@@ -15,7 +15,7 @@ enum DuplicatesError: Error, CustomStringConvertible, Equatable {
     var description: String {
         switch self {
         case .duplicateEntries(let duplicates, let context):
-            "❌ Duplicate \(context) entries found:\n\(duplicates.joined(separator: ", "))"
+            "error: ❌ Duplicate \(context) entries found:\n\(duplicates.joined(separator: ", "))"
         }
     }
 }

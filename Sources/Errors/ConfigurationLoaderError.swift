@@ -14,7 +14,7 @@ enum ConfigurationLoaderError: Error, CustomStringConvertible, Equatable {
     var description: String {
         switch self {
         case .configurationFileNotFound(let path):
-            "❌ Configuration file not found at path: \(path)"
+            "error: ❌ Configuration file not found at path: \(path)"
         }
     }
 }

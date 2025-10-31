@@ -27,11 +27,11 @@ enum ExclusivesError: Error, CustomStringConvertible, Equatable {
     var description: String {
         switch self {
         case .invalidTargetName(let name):
-            "❌ Target name \(name) inside exclusive section doesn't exist in the project"
+            "error: ❌ Target name \(name) inside exclusive section doesn't exist in the project"
         case .invalidPathForTarget(let targetName, let path):
-            "❌ Path \(path) inside exclusive section for target \(targetName) doesn't exist in the project"
+            "error: ❌ Path \(path) inside exclusive section for target \(targetName) doesn't exist in the project"
         case .exclusiveEntriesFound(let targetNames):
-            "❌ Exclusive entries found for targets: \(targetNames)"
+            "error: ❌ Exclusive entries found for targets: \(targetNames)"
         }
     }
 }

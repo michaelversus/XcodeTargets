@@ -159,7 +159,7 @@ private extension ExclusivesProcessor {
         targets: String
     ) {
         guard !entries.isEmpty else { return }
-        print("Exclusive \(kind) found between targets \(targets):")
+        print("error: ❌ Exclusive \(kind) found between targets \(targets):")
         for entry in entries.sorted() {
             print(" - \(entry)")
         }

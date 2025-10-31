@@ -258,7 +258,7 @@ final class ExclusivesProcessorTests {
 
         // Then
         let expectedMessages = [
-            "Exclusive dependencies found between targets TargetA, TargetB:",
+            "error: ❌ Exclusive dependencies found between targets TargetA, TargetB:",
             " - Networking"
         ]
         #expect(messages == expectedMessages)

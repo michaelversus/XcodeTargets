@@ -11,7 +11,7 @@ struct ForbiddenResourceError: Error, CustomStringConvertible, Equatable {
 
     /// A human readable, multiline description enumerating each forbidden resource path found.
     var description: String {
-        "❌ Forbidden resource(s) found in target \(targetName):\n" +
+        "error: ❌ Forbidden resource(s) found in target \(targetName):\n" +
         matchingPaths
             .map { " - \($0)" }
             .sorted()
