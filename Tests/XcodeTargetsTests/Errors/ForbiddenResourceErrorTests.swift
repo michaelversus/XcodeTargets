@@ -17,6 +17,6 @@ struct ForbiddenResourceErrorTests {
         let description = error.description
 
         // Then
-        #expect(description == "error: ❌ Forbidden resource(s) found in target TargetA:\n - Sources/Forbidden/AnotherFile.swift\n - Sources/Forbidden/File.swift")
+        #expect(description == "❌ Forbidden resource(s) found in target TargetA:\n - Sources/Forbidden/AnotherFile.swift\n - Sources/Forbidden/File.swift")
     }
 }

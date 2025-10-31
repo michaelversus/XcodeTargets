@@ -13,7 +13,7 @@ struct ExclusivesErrorTests {
         let description = sut.description
 
         // Then
-        #expect(description == "error: ❌ Target name MyTarget inside exclusive section doesn't exist in the project")
+        #expect(description == "❌ Target name MyTarget inside exclusive section doesn't exist in the project")
     }
 
     @Test("test description of invalidPathForTarget")
@@ -25,18 +25,45 @@ struct ExclusivesErrorTests {
         let description = sut.description
 
         // Then
-        #expect(description == "error: ❌ Path Sources/NonExistent inside exclusive section for target MyTarget doesn't exist in the project")
+        #expect(description == "❌ Path Sources/NonExistent inside exclusive section for target MyTarget doesn't exist in the project")
     }
 
     @Test("test description of exclusiveEntriesFound")
     func test_descriptionGivenExclusiveEntriesFound() throws {
         // Given
-        let sut = ExclusivesError.exclusiveEntriesFound(targetNames: "MyTarget1, MyTarget2")
+        let sut = ExclusivesError.exclusiveEntriesFound(
+            targetNames: "MyTarget1, MyTarget2",
+            diff: Target(
+                name: "Difference",
+                filePaths: [
+                    "/path/to/file.swift",
+                    "/another/path/to/file.swift"
+                ],
+                dependencies: [
+                    "SomeTargetA",
+                    "SomeTargetB"
+                ],
+                frameworks: [
+                    "SomeFrameworkA",
+                    "SomeFrameworkB"
+                ]
+            )
+        )
 
         // When
         let description = sut.description
 
         // Then
-        #expect(description == "error: ❌ Exclusive entries found for targets: MyTarget1, MyTarget2")
+        var expectedDescription = "❌ Exclusive entries found for targets: MyTarget1, MyTarget2\n"
+        expectedDescription += " Conflicting files:\n"
+        expectedDescription += " - /another/path/to/file.swift\n"
+        expectedDescription += " - /path/to/file.swift\n"
+        expectedDescription += " Conflicting dependencies:\n"
+        expectedDescription += " - SomeTargetA\n"
+        expectedDescription += " - SomeTargetB\n"
+        expectedDescription += " Conflicting frameworks:\n"
+        expectedDescription += " - SomeFrameworkA\n"
+        expectedDescription += " - SomeFrameworkB\n"
+        #expect(description == expectedDescription)
     }
 }

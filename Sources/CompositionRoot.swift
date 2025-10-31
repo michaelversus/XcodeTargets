@@ -112,6 +112,6 @@ struct CompositionRoot {
             targetsIndex: targetsIndex
         )
         // Final message
-        print("✅ Xcode Targets validation completed successfully.")
+        Swift.print("✅ Xcode Targets validation completed successfully.")
     }
 }
