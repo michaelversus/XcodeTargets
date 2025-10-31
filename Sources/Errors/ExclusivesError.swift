@@ -21,17 +21,56 @@ enum ExclusivesError: Error, CustomStringConvertible, Equatable {
 
     /// Conflicting exclusive entries were found across the provided targets (duplicates in mutually exclusive sections).
     /// - Parameter targetNames: A comma-separated list of conflicting target names.
-    case exclusiveEntriesFound(targetNames: String)
+    /// - Parameter diff: A `Target` instance representing the differences found.
+    case exclusiveEntriesFound(targetNames: String, diff: Target)
 
     /// A human-readable description of the exclusivity validation failure, suitable for logging or displaying in diagnostics.
     var description: String {
         switch self {
         case .invalidTargetName(let name):
-            "error: ❌ Target name \(name) inside exclusive section doesn't exist in the project"
+            "❌ Target name \(name) inside exclusive section doesn't exist in the project"
         case .invalidPathForTarget(let targetName, let path):
-            "error: ❌ Path \(path) inside exclusive section for target \(targetName) doesn't exist in the project"
-        case .exclusiveEntriesFound(let targetNames):
-            "error: ❌ Exclusive entries found for targets: \(targetNames)"
+            "❌ Path \(path) inside exclusive section for target \(targetName) doesn't exist in the project"
+        case .exclusiveEntriesFound(let targetNames, let diff):
+            exclusiveEntriesErrorMessage(
+                targetNames: targetNames,
+                diff: diff
+            )
+        }
+    }
+
+    private func exclusiveEntriesErrorMessage(
+        targetNames: String,
+        diff: Target
+    ) -> String {
+        var message = "❌ Exclusive entries found for targets: \(targetNames)\n"
+        updateMessage(
+            kind: "files",
+            entries: diff.filePaths,
+            message: &message
+        )
+        updateMessage(
+            kind: "dependencies",
+            entries: diff.dependencies,
+            message: &message
+        )
+        updateMessage(
+            kind: "frameworks",
+            entries: diff.frameworks,
+            message: &message
+        )
+        return message
+    }
+
+    private func updateMessage(
+        kind: String,
+        entries: Set<String>,
+        message: inout String
+    ) {
+        guard !entries.isEmpty else { return }
+        message += " Conflicting \(kind):\n"
+        for entry in entries.sorted() {
+            message += " - \(entry)\n"
         }
     }
 }

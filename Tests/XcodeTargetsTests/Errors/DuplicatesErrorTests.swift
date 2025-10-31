@@ -18,7 +18,7 @@ struct DuplicatesErrorTests {
         let description = error.description
 
         // Then
-        let expectedDescription = "error: ❌ Duplicate testContext entries found:\nItem1, Item2, Item3"
+        let expectedDescription = "❌ Duplicate testContext entries found:\nItem1, Item2, Item3"
         #expect(description == expectedDescription)
     }
 

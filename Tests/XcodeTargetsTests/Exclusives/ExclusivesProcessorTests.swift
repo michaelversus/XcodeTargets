@@ -257,12 +257,14 @@ final class ExclusivesProcessorTests {
         })
 
         // Then
-        let expectedMessages = [
-            "error: ❌ Exclusive dependencies found between targets TargetA, TargetB:",
-            " - Networking"
-        ]
-        #expect(messages == expectedMessages)
-        #expect(error == .exclusiveEntriesFound(targetNames: "TargetA, TargetB"))
+        let diff = Target(
+            name: "Difference",
+            filePaths: [],
+            dependencies: ["Networking"],
+            frameworks: []
+        )
+        #expect(messages.isEmpty)
+        #expect(error == .exclusiveEntriesFound(targetNames: "TargetA, TargetB", diff: diff))
     }
 
     @Test("test process given wildcard exclusive pattern prunes all matching file paths")

@@ -143,25 +143,12 @@ private extension ExclusivesProcessor {
             let diff = slice.differenceTarget()
             let joined = names.joined(separator: ", ")
 
-            logIfNotEmpty(kind: "files", entries: diff.filePaths, targets: joined)
-            logIfNotEmpty(kind: "dependencies", entries: diff.dependencies, targets: joined)
-            logIfNotEmpty(kind: "frameworks", entries: diff.frameworks, targets: joined)
-
             if diff.containsNotEmptySets {
-                throw ExclusivesError.exclusiveEntriesFound(targetNames: joined)
+                throw ExclusivesError.exclusiveEntriesFound(
+                    targetNames: joined,
+                    diff: diff
+                )
             }
-        }
-    }
-
-    func logIfNotEmpty(
-        kind: String,
-        entries: Set<String>,
-        targets: String
-    ) {
-        guard !entries.isEmpty else { return }
-        print("error: ❌ Exclusive \(kind) found between targets \(targets):")
-        for entry in entries.sorted() {
-            print(" - \(entry)")
         }
     }
 }
