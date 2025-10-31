@@ -35,17 +35,17 @@ enum XcodeProjectParserError: Error, CustomStringConvertible, Equatable {
     var description: String {
         switch self {
         case .invalidTargetName(let name):
-            "error: ❌ Invalid target name \(name)"
+            "❌ Invalid target name \(name)"
         case .invalidPath(let path):
-            "error: ❌ Invalid path \(path)"
+            "❌ Invalid path \(path)"
         case .failedToResolveBuildableFolderPath(let path):
-            "error: ❌ Failed to resolve buildable folder path \(path)"
+            "❌ Failed to resolve buildable folder path \(path)"
         case .forbiddenBuildableFoldersForGroups(let groups):
-            "error: ❌ Forbidden buildable folders for groups: \n\(groups.joined(separator: ", \n"))"
+            "❌ Forbidden buildable folders for groups: \n\(groups.joined(separator: ", \n"))"
         case .exceptionSetTargetIsNil(let groupPath):
-            "error: ❌ Exception set target is nil for group at path: \(groupPath)"
+            "❌ Exception set target is nil for group at path: \(groupPath)"
         case .exceptionSetTargetProductTypeIsNil(let groupPath):
-            "error: ❌ Exception set target product type is nil for group at path: \(groupPath)"
+            "❌ Exception set target product type is nil for group at path: \(groupPath)"
         }
     }
 }

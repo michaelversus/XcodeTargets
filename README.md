@@ -21,6 +21,7 @@ brew install xcodetargets
 - `-c` lets you specify a path to your .xcode-targets.json configuration file.
 - `-r` sets the path XcodeTargets should scan. This defaults to your current working directory.
 - `-v` enables verbose output. Default value is false.
+- `-e` enables error only output. Default value is false. (Practical for CICD)
 
 ## ⚙️ Configuration
 You can customize the behavior of **XcodeTargets** by creating a **.xcode-targets.json** file inside the directory you want to scan.
